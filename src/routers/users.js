@@ -7,8 +7,13 @@ const router = new express.Router()
 
 // Add a new user
 router.post('/users', async (req, res) => {
-  const user = new User(req.body)
+  if (req.body.password !== req.body.passwordRetype) {
+    return res.status(400).send({ error: 'Passwords Must Match' , message: 'Passwords must match'})
+  }
+  delete req.body.passwordRetype
 
+  const user = new User(req.body)
+  
   try {
     await user.save()
     const token = await user.generateAuthToken()
@@ -36,7 +41,7 @@ router.post('/users/logout', auth, async (req, res) => {
 })
 
 router.post('/users/login', async (req, res) => {
-
+  
   try {
     const user = await User.findByCredentials(req.body.email, req.body.password)
     const token = await user.generateAuthToken()
