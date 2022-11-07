@@ -3,6 +3,7 @@ const validator = require('validator')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const Schema = mongoose.Schema
+const Contact = require('./contact')
 
 const userSchema = new Schema(
   { 
@@ -84,6 +85,19 @@ userSchema.statics.findByCredentials = async (email, password) => {
   } 
   return user 
 }
+
+userSchema.virtual('contacts', {
+  localField: '_id',
+  foreignField: 'owner',
+  ref: 'Contact'
+})
+
+userSchema.pre('deleteOne', { document: true, query: false }, async function(next) {
+  const user = this
+
+  await mongoose.model('Contact').deleteMany({ owner: user._id })
+  next()
+})
 
 const User = mongoose.model('User', userSchema);
 
