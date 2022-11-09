@@ -12,10 +12,12 @@ app.use(function(req, res, next) {
     next();
 });
 
-const userRouter = require('./routers/users')
-const contactRouter = require('./routers/contacts')
-app.use(userRouter)
-app.use(contactRouter)
+const usersRouter = require('./routers/users')
+const contactsRouter = require('./routers/contacts')
+const messagesRouter = require('./routers/messages')
+app.use(usersRouter)
+app.use(contactsRouter)
+app.use(messagesRouter)
 
 const port = process.env.PORT
 

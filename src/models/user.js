@@ -92,6 +92,12 @@ userSchema.virtual('contacts', {
   ref: 'Contact'
 })
 
+userSchema.virtual('messages', {
+  localField: '_id',
+  foreignField: 'owner',
+  ref: 'Message'
+})
+
 userSchema.pre('deleteOne', { document: true, query: false }, async function(next) {
   const user = this
 
