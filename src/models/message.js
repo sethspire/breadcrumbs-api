@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
-const validator = require('validator')
 const User = require('./user')
+const validator = require('validator')
 
 const Schema = mongoose.Schema
 
@@ -16,17 +16,41 @@ const messageSchema = new Schema({
         type: Date,
         required: true,
     },
+    /*
+    // contacts schema if pre-saving contact info
     contacts: {
         type: [mongoose.Schema.Types.ObjectId],
         default: undefined,
         required: true,
-        ref: 'Contact'
+        ref: 'Contact',
+        validate: [arrayMin1, '{PATH} needs at least 1']
+    },
+    */
+    // contact schema to create contacts unique to message
+    contacts: {
+        type: [{
+            name: {
+                type: String,
+                required: true,
+                trim: true
+            },
+            phoneNumber: {
+                type: String,
+                required: true,
+                trim: true,
+                validate(value) {
+                    if (!validator.isMobilePhone(value)) {
+                        throw new Error('Phone Number is invalid.')
+                    }
+                }
+            }
+        }],
+        validate: [arrayMin1, '{PATH} needs at least 1']
     },
     geoLocation: {
-        type: String,
-        trim: true,
-        required: true,
-        maxLength: 100
+        state: {type: String, required: true},
+        city: {type: String, required: true},
+        street: {type: String}
     },
     owner: {
         type: Schema.Types.ObjectId,
@@ -41,6 +65,10 @@ messageSchema.methods.toJSON = function() {
     delete messageObject.__v
     
     return messageObject
+}
+
+function arrayMin1(val) {
+    return val.length >= 1;
 }
 
 const Message = mongoose.model('Message', messageSchema);
