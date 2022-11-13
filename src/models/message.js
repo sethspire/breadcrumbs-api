@@ -52,6 +52,11 @@ const messageSchema = new Schema({
         city: {type: String, required: true},
         street: {type: String}
     },
+    completed: {
+        type: Boolean,
+        default: false,
+        required: true
+    },
     owner: {
         type: Schema.Types.ObjectId,
         required: true,

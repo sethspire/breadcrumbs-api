@@ -35,7 +35,7 @@ router.patch('/messages', auth, async(req, res) => {
     const id = req.body._id
     delete req.body._id
     const updates = Object.keys(req.body)
-    const allowedUpdates = ['messageText', 'sendDatetime', 'contacts', 'geoLocation']
+    const allowedUpdates = ['messageText', 'sendDatetime', 'contacts', 'geoLocation', 'completed']
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
 
     if (!isValidOperation) {
