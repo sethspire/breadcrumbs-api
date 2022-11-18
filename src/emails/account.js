@@ -10,6 +10,16 @@ const sendWelcomeEmail = (email, name) => {
         subject: 'Welcome to Breadcrumbs!', 
         text: `Hello ${name}!\nWe have some great things in store for you!` 
     })
-} 
+}
 
-module.exports = { sendWelcomeEmail }
+const sendPwResetEmail = (email, name, reset_url) => { 
+
+    sgMail.send({ 
+        to: email, 
+        from: 'sspire2@eagles.bridgewater.edu', 
+        subject: 'Breadcrumbs Reset Password', 
+        text: `Hello ${name}!\nWe have received a request to reset the password for the account at thebreadcrumbs.herokuapp.com that associated with your email. If you did not attempt to reset your email, please ignore the following link and contact us at BreadCrumbs.\n\n Here is the link you can follow to reset your password:\n${reset_url}\n\nThank you!\nBest wishes,\nThe Breadcrumbs Team` 
+    })
+}
+
+module.exports = { sendWelcomeEmail, sendPwResetEmail }
