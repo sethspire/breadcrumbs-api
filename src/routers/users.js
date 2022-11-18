@@ -133,7 +133,7 @@ router.patch('/user/pwReset/reset', async (req, res) => {
     user.password = req.body.password
     await user.save()
 
-    res.status(201).send(user)
+    res.status(200).send(user)
   } 
   catch (e) {    
     res.status(400).send(e)
