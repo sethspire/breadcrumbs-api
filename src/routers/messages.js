@@ -1,7 +1,7 @@
 const express = require('express')
 const Message = require('../models/message')
 const auth = require('../middleware/auth')
-
+const { sendLocationEmail } = require('../emails/message-API.js')
 const router = new express.Router()
 
 router.post('/messages', auth, async(req, res) => {
@@ -14,6 +14,7 @@ router.post('/messages', auth, async(req, res) => {
     
     try {
         await message.save()
+        await message.sendLocationEmail(message.contacts.email, message.contacts.name, user.email, user.name, message.messageText, message.geoLocation, message.timeStamp, message._id)
         res.status(201).send(message)
     } catch (e) {
         res.status(400).send(e)
