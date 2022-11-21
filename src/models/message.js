@@ -34,13 +34,15 @@ const messageSchema = new Schema({
                 required: true,
                 trim: true
             },
-            phoneNumber: {
+            email: {
                 type: String,
+                unique: true,
                 required: true,
                 trim: true,
+                lowercase: true,
                 validate(value) {
-                    if (!validator.isMobilePhone(value)) {
-                        throw new Error('Phone Number is invalid.')
+                    if (!validator.isEmail(value)) {
+                        throw new Error('Email is invalid.')
                     }
                 }
             }
