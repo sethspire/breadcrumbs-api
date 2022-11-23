@@ -1,20 +1,26 @@
 const express = require('express')
 const Message = require('../models/message')
 const auth = require('../middleware/auth')
-const { sendLocationEmail } = require('../emails/message-API.js')
+const { sendLocationEmail, getBatchID } = require('../emails/message-API.js')
 const router = new express.Router()
 
 router.post('/messages', auth, async(req, res) => {
     const user = req.user
     
-    const message = new Message({
-        ...req.body,
-        owner: user._id
-    })
-    
     try {
+        // function to get batchID currently does not work
+        // const batch_id = await getBatchID()
+
+        // set message 
+        const message = new Message({
+            ...req.body,
+            owner: user._id,
+            //batch_id: batchID_response.batch_id
+        })
         await message.save()
-        await message.sendLocationEmail(message.contacts.email, message.contacts.name, user.email, user.name, message.messageText, message.geoLocation, message.timeStamp, message._id)
+        message.contacts.forEach(async function(contact) {
+            await sendLocationEmail(contact.email, contact.name, user.name, message.messageText, message.geoLocation, message.sendDatetime)
+        });
         res.status(201).send(message)
     } catch (e) {
         res.status(400).send(e)

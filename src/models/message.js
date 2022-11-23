@@ -36,7 +36,6 @@ const messageSchema = new Schema({
             },
             email: {
                 type: String,
-                unique: true,
                 required: true,
                 trim: true,
                 lowercase: true,
@@ -58,6 +57,10 @@ const messageSchema = new Schema({
         type: Boolean,
         default: false,
         required: true
+    },
+    batch_id: {
+        type: String,
+        //required: true
     },
     owner: {
         type: Schema.Types.ObjectId,
