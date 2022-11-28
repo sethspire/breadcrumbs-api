@@ -3,7 +3,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 const sgClient = require('@sendgrid/client');
 sgClient.setApiKey(process.env.SENDGRID_API_KEY);
 
-const sendLocationEmail = async (email, name, userName, msgText, geoLocation, dateTime) => { 
+const sendLocationEmail = async (email, name, userName, msgText, geoLocation, dateTime, batch_id) => { 
     tempDate = new Date(dateTime)
     const timeStamp = Math.floor(tempDate.getTime() / 1000)
     sgMail.send({ 
@@ -11,30 +11,48 @@ const sendLocationEmail = async (email, name, userName, msgText, geoLocation, da
         from: "sspire2@eagles.bridgewater.edu", 
         subject: `SOS Message from ${userName}`, 
         text: `Hello ${name}!\n ${msgText}. This is my location: ${geoLocation}`, 
-        sendAt: timeStamp
+        sendAt: timeStamp,
+        batch_id: batch_id
     })
 }
 
-// doesn't work for some reason
+// now works :)
 const getBatchID = async() => {
     const headers = {
     }
+
     const batchID_request = {
         url: `/v3/mail/batch`,
         method: 'POST',
         headers: headers
     }
-    sgClient.request(batchID_request)
-        .then(([response]) => {
-            console.log("might have gotten batch id")
-            console.log(response.statusCode)
-            console.log(response.body)
-            return response
-        })
-        .catch(error => {
-            console.log("error getting batch id")
-            console.error(error)
-    });
+    
+    try {
+        const response = await sgClient.request(batchID_request)
+        return response[1].batch_id
+    } catch (e) {
+        console.log("got error", e)
+    }
+}
+
+// old version using fetch
+const getBatchID_deprecated = async() => {
+    const url = "https://api.sendgrid.com/v3/mail/batch"
+
+    const options = {
+        method: 'POST',
+        headers: {
+            Authorization: "Bearer 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"
+        }
+    }
+    
+    try {
+        const response = await fetch (url, options)
+        data = await response.json()
+        return data.batch_id
+    } catch (e) {
+        console.log("got error")
+    }
 }
 
 module.exports = { sendLocationEmail, getBatchID }

@@ -8,18 +8,17 @@ router.post('/messages', auth, async(req, res) => {
     const user = req.user
     
     try {
-        // function to get batchID currently does not work
-        // const batch_id = await getBatchID()
+        const batch_id = await getBatchID()
 
         // set message 
         const message = new Message({
             ...req.body,
             owner: user._id,
-            //batch_id: batchID_response.batch_id
+            batch_id: batch_id
         })
         await message.save()
         message.contacts.forEach(async function(contact) {
-            await sendLocationEmail(contact.email, contact.name, user.name, message.messageText, message.geoLocation, message.sendDatetime)
+            await sendLocationEmail(contact.email, contact.name, user.name, message.messageText, message.geoLocation, message.sendDatetime, message.batch_id)
         });
         res.status(201).send(message)
     } catch (e) {
@@ -75,6 +74,17 @@ router.delete('/messages', auth, async(req, res) => {
         res.send(message)
     } catch (e) {
         res.status(500).send(e)
+    }
+})
+
+router.get('/messages/testBatchID', async(req, res) => {    
+    try {
+        // function to get batchID currently does not work
+        const batch_id = await getBatchID()
+        console.log(batch_id)
+        res.status(201).send(batch_id)
+    } catch (e) {
+        res.status(400).send(e)
     }
 })
 
