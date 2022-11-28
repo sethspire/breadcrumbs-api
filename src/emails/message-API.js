@@ -35,24 +35,4 @@ const getBatchID = async() => {
     }
 }
 
-// old version using fetch
-const getBatchID_deprecated = async() => {
-    const url = "https://api.sendgrid.com/v3/mail/batch"
-
-    const options = {
-        method: 'POST',
-        headers: {
-            Authorization: "Bearer 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"
-        }
-    }
-    
-    try {
-        const response = await fetch (url, options)
-        data = await response.json()
-        return data.batch_id
-    } catch (e) {
-        console.log("got error")
-    }
-}
-
 module.exports = { sendLocationEmail, getBatchID }
