@@ -53,14 +53,11 @@ const messageSchema = new Schema({
         city: {type: String, required: true},
         street: {type: String}
     },
+    sibMessageIDs: [{type: String}],
     completed: {
         type: Boolean,
         default: false,
         required: true
-    },
-    batch_id: {
-        type: String,
-        //required: true
     },
     owner: {
         type: Schema.Types.ObjectId,
